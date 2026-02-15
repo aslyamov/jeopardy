@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Своя Игра</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            board: '#1a1a6e',
+            cell: '#1e3a8a',
+            gold: '#facc15',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-950 text-white min-h-full flex flex-col items-center px-4">
+
+  <!-- ========== ГЛАВНАЯ ========== -->
+  <div id="screen-home" class="flex flex-col items-center justify-center min-h-screen gap-7 w-full max-w-2xl">
+    <h1 class="text-5xl md:text-7xl font-black text-gold tracking-tight text-center">
+      СВОЯ ИГРА
+    </h1>
+    <p class="text-gray-400 text-center">Создавай вопросы. Играй с друзьями.</p>
+
+    <div class="flex flex-col gap-3 w-full max-w-xs">
+      <button id="btn-new-game"
+        class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-colors">
+        Новая игра
+      </button>
+
+      <button id="btn-continue"
+        class="hidden bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-xl transition-colors">
+        Продолжить
+      </button>
+
+      <button id="btn-editor"
+        class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-xl transition-colors">
+        Редактор вопросов
+      </button>
+    </div>
+  </div>
+
+  <!-- ========== НАСТРОЙКА ИГРЫ ========== -->
+  <div id="screen-setup" class="hidden min-h-screen flex flex-col justify-center py-6 w-full max-w-xl">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold">Настройка игры</h2>
+      <button data-nav="home" class="text-gray-400 hover:text-white transition-colors text-sm">
+        &larr; Назад
+      </button>
+    </div>
+
+    <div class="space-y-5">
+      <!-- Выбор набора -->
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Набор вопросов</label>
+        <select id="pack-select"
+          class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white focus:border-blue-500 focus:outline-none">
+        </select>
+      </div>
+
+      <!-- Игроки -->
+      <div>
+        <label class="block text-sm text-gray-400 mb-2">Игроки</label>
+        <div id="players-inputs" class="space-y-2"></div>
+        <button id="btn-add-player" class="mt-2 text-blue-400 hover:text-blue-300 text-sm transition-colors">
+          + Добавить игрока
+        </button>
+      </div>
+
+      <!-- Таймер -->
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Таймер на вопрос (сек), 0 = без таймера</label>
+        <input id="timer-input" type="number" value="0" min="0" step="5"
+          class="w-28 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-center focus:border-blue-500 focus:outline-none" />
+      </div>
+
+      <button id="btn-start-game"
+        class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-colors">
+        Начать игру
+      </button>
+    </div>
+  </div>
+
+  <!-- ========== ИГРОВОЕ ПОЛЕ ========== -->
+  <div id="screen-board" class="hidden min-h-screen flex flex-col justify-center py-4 w-full max-w-5xl">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-xl font-bold">Своя Игра</h2>
+      <div class="flex gap-2">
+        <button id="btn-end-game" class="bg-red-600/80 hover:bg-red-500 px-3 py-1.5 rounded-lg text-xs transition-colors">
+          Завершить
+        </button>
+        <button data-nav="home" class="text-gray-400 hover:text-white transition-colors text-xs">
+          &larr; Главная
+        </button>
+      </div>
+    </div>
+
+    <div id="game-board" class="w-full"></div>
+
+    <div id="scoreboard" class="mt-3"></div>
+  </div>
+
+  <!-- ========== ЭКРАН ВОПРОСА ========== -->
+  <div id="screen-question" class="hidden flex flex-col items-center justify-center min-h-screen py-6 w-full max-w-3xl">
+    <!-- Контент генерируется динамически в game.ts -->
+  </div>
+
+  <!-- ========== ИТОГИ ========== -->
+  <div id="screen-results" class="hidden flex flex-col items-center justify-center min-h-screen py-6 w-full max-w-xl">
+    <h2 class="text-3xl font-black text-gold mb-6">Итоги</h2>
+    <div id="results-content" class="w-full"></div>
+    <button data-nav="home"
+      class="mt-6 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-colors">
+      На главную
+    </button>
+  </div>
+
+  <!-- ========== РЕДАКТОР ВОПРОСОВ ========== -->
+  <div id="screen-editor" class="hidden min-h-screen py-6 w-full max-w-4xl">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold">Редактор вопросов</h2>
+      <button data-nav="home" class="text-gray-400 hover:text-white transition-colors text-sm">
+        &larr; Назад
+      </button>
+    </div>
+
+    <!-- Список наборов -->
+    <div id="editor-list-area" class="space-y-4">
+      <div class="flex gap-3">
+        <button id="btn-create-pack" class="bg-blue-600 hover:bg-blue-500 font-bold px-4 py-2.5 rounded-xl text-sm transition-colors">
+          + Новый набор
+        </button>
+        <button id="btn-import-pack" class="bg-gray-700 hover:bg-gray-600 px-4 py-2.5 rounded-xl text-sm transition-colors">
+          Импорт JSON
+        </button>
+      </div>
+      <div id="pack-list" class="space-y-2"></div>
+    </div>
+
+    <!-- Редактор набора (скрыт по умолчанию) -->
+    <div id="editor-area" class="hidden"></div>
+  </div>
+
+  <script src="dist/bundle.js"></script>
+</body>
+</html>
