@@ -43,8 +43,6 @@ export function clearGame(): void {
 
 // --- Встроенные наборы из packs/ ---
 
-const BUILTIN_KEY = 'jeopardy_builtin_loaded';
-
 export async function loadBuiltinPacks(): Promise<void> {
   try {
     const res = await fetch('packs/index.json');

@@ -1,23 +1,29 @@
-import { GameState, QuestionPack, Player } from './types';
+import { GameState, Player } from './types';
 import { loadPacks, saveGame, loadGame, clearGame } from './storage';
 import { navigateTo } from './app';
+import { escapeHtml, showModal } from './utils';
 
 let game: GameState | null = null;
 let timerInterval: number | null = null;
 let selectedPlayers: Set<number> = new Set();
+let setupInitialized = false;
 
 // ===================== ЭТАП 3: НАСТРОЙКА ИГРЫ =====================
 
 export function initSetup(): void {
   renderPackSelect();
 
-  document.getElementById('btn-add-player')?.addEventListener('click', addPlayerInput);
-  document.getElementById('btn-start-game')?.addEventListener('click', startGame);
-
+  // Сбрасываем поля игроков при каждом заходе
   const container = document.getElementById('players-inputs')!;
-  if (container.children.length === 0) {
-    addPlayerInput();
-    addPlayerInput();
+  container.innerHTML = '';
+  addPlayerInput();
+  addPlayerInput();
+
+  // Привязываем обработчики только один раз
+  if (!setupInitialized) {
+    setupInitialized = true;
+    document.getElementById('btn-add-player')?.addEventListener('click', addPlayerInput);
+    document.getElementById('btn-start-game')?.addEventListener('click', startGame);
   }
 }
 
@@ -141,7 +147,7 @@ function renderScoreboard(): void {
   const el = document.getElementById('scoreboard')!;
   el.innerHTML = `
     <div class="flex flex-wrap gap-3 justify-center">
-      ${game.players.map((p, i) => `
+      ${game.players.map((p) => `
         <div class="bg-gray-800 rounded-xl px-5 py-2.5 text-center min-w-[110px]">
           <div class="text-sm text-gray-400 truncate">${escapeHtml(p.name)}</div>
           <div class="text-2xl font-black ${p.score >= 0 ? 'text-gold' : 'text-red-400'}">${p.score}</div>
@@ -159,6 +165,7 @@ function openQuestion(catIdx: number, qIdx: number): void {
   game.currentQuestion = { catIdx, qIdx };
   selectedPlayers = new Set();
   const question = game.pack.categories[catIdx].questions[qIdx];
+  const imageSrc = question.image ? escapeHtml(question.image) : '';
 
   const screen = document.getElementById('screen-question')!;
   screen.innerHTML = `
@@ -170,7 +177,7 @@ function openQuestion(catIdx: number, qIdx: number): void {
       </div>
 
       <!-- Картинка -->
-      ${question.image ? `<img src="${question.image}" class="max-h-[70vh] w-auto rounded-xl object-contain" alt="Вопрос" />` : ''}
+      ${imageSrc ? `<img src="${imageSrc}" class="max-h-[70vh] w-auto rounded-xl object-contain" alt="Вопрос" />` : ''}
 
       <!-- Вопрос -->
       <div class="text-2xl md:text-4xl font-bold text-center leading-snug px-4">
@@ -207,6 +214,9 @@ function openQuestion(catIdx: number, qIdx: number): void {
         <button id="btn-confirm-next" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-3 rounded-xl font-bold transition-colors hidden">
           Далее →
         </button>
+        <button id="btn-skip-question" class="bg-yellow-600 hover:bg-yellow-500 px-6 py-3 rounded-xl font-bold transition-colors hidden">
+          Никто не ответил
+        </button>
         <button id="btn-back-board" class="bg-gray-800 hover:bg-gray-700 px-6 py-3 rounded-xl transition-colors">
           Назад к полю
         </button>
@@ -225,11 +235,23 @@ function openQuestion(catIdx: number, qIdx: number): void {
     });
   });
 
-  document.getElementById('btn-show-answer')!.addEventListener('click', showAnswer);
+  document.getElementById('btn-show-answer')!.addEventListener('click', () => {
+    showAnswer();
+    // Показать кнопку "Никто не ответил" после раскрытия ответа
+    document.getElementById('btn-skip-question')?.classList.remove('hidden');
+  });
 
   // Далее → начислить очки выделенным и закрыть
   document.getElementById('btn-confirm-next')!.addEventListener('click', () => {
     confirmAndClose(question.value);
+  });
+
+  // Никто не ответил → пометить отвеченным без начисления
+  document.getElementById('btn-skip-question')!.addEventListener('click', () => {
+    stopTimer();
+    markAnswered();
+    game!.currentQuestion = null;
+    goBackToBoard();
   });
 
   // Назад к полю — без начисления, вопрос НЕ помечается
@@ -252,12 +274,17 @@ function togglePlayerSelection(playerIdx: number, btn: HTMLButtonElement): void 
 
   // Показать/скрыть кнопку "Далее"
   const nextBtn = document.getElementById('btn-confirm-next');
+  const skipBtn = document.getElementById('btn-skip-question');
   const hint = document.getElementById('selection-hint');
   if (selectedPlayers.size > 0) {
     nextBtn?.classList.remove('hidden');
+    skipBtn?.classList.add('hidden');
     if (hint) hint.textContent = `Очки получат: ${Array.from(selectedPlayers).map(i => game!.players[i].name).join(', ')}`;
   } else {
     nextBtn?.classList.add('hidden');
+    // Показать "Никто не ответил" только если ответ уже раскрыт
+    const answerVisible = !document.getElementById('answer-block')?.classList.contains('hidden');
+    if (answerVisible) skipBtn?.classList.remove('hidden');
     if (hint) hint.textContent = 'Нажми на игрока — ему начислятся очки';
   }
 }
@@ -275,7 +302,6 @@ function confirmAndClose(value: number): void {
   markAnswered();
   saveGame(game);
 
-  // Показать ответ и перейти
   game.currentQuestion = null;
   goBackToBoard();
 }
@@ -326,6 +352,7 @@ function startTimer(): void {
       stopTimer();
       display.textContent = '⏰';
       showAnswer();
+      document.getElementById('btn-skip-question')?.classList.remove('hidden');
     }
   }, 1000);
 }
@@ -335,48 +362,6 @@ function stopTimer(): void {
     clearInterval(timerInterval);
     timerInterval = null;
   }
-}
-
-// ===================== КАСТОМНЫЙ МОДАЛ =====================
-
-function showModal(message: string, onConfirm?: () => void): void {
-  // Удалить предыдущий если есть
-  document.getElementById('custom-modal')?.remove();
-
-  const isConfirm = !!onConfirm;
-  const modal = document.createElement('div');
-  modal.id = 'custom-modal';
-  modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm';
-  modal.innerHTML = `
-    <div class="bg-gray-900 border border-gray-700 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl text-center space-y-4">
-      <p class="text-lg">${escapeHtml(message)}</p>
-      <div class="flex gap-3 justify-center">
-        ${isConfirm ? `
-          <button id="modal-cancel" class="bg-gray-700 hover:bg-gray-600 px-5 py-2.5 rounded-xl transition-colors">Отмена</button>
-          <button id="modal-ok" class="bg-red-600 hover:bg-red-500 px-5 py-2.5 rounded-xl font-bold transition-colors">Подтвердить</button>
-        ` : `
-          <button id="modal-ok" class="bg-blue-600 hover:bg-blue-500 px-5 py-2.5 rounded-xl font-bold transition-colors">Ок</button>
-        `}
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-
-  // Закрытие по фону
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) closeModal();
-  });
-
-  document.getElementById('modal-ok')!.addEventListener('click', () => {
-    closeModal();
-    if (onConfirm) onConfirm();
-  });
-
-  document.getElementById('modal-cancel')?.addEventListener('click', closeModal);
-}
-
-function closeModal(): void {
-  document.getElementById('custom-modal')?.remove();
 }
 
 // ===================== ЭТАП 7: ИТОГИ =====================
@@ -427,12 +412,4 @@ function showResults(): void {
 
   clearGame();
   navigateTo('results');
-}
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
 }

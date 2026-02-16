@@ -1,6 +1,6 @@
-import { QuestionPack, Category, Question } from './types';
+import { QuestionPack } from './types';
 import { loadPacks, savePacks } from './storage';
-import { navigateTo } from './app';
+import { escapeHtml, showModal } from './utils';
 
 let currentPack: QuestionPack | null = null;
 let currentPackIndex: number = -1; // -1 = новый набор
@@ -33,7 +33,7 @@ export function initEditor(): void {
           savePacks(packs);
           renderPackList();
         } catch {
-          alert('Некорректный JSON файл');
+          showModal('Некорректный JSON файл');
         }
       };
       reader.readAsText(file);
@@ -91,11 +91,11 @@ function renderPackList(): void {
   container.querySelectorAll<HTMLButtonElement>('[data-delete-pack]').forEach((btn) => {
     btn.addEventListener('click', () => {
       const idx = parseInt(btn.dataset.deletePack!);
-      if (confirm(`Удалить набор "${packs[idx].title}"?`)) {
+      showModal(`Удалить набор "${packs[idx].title}"?`, () => {
         packs.splice(idx, 1);
         savePacks(packs);
         renderPackList();
-      }
+      });
     });
   });
 }
@@ -294,7 +294,7 @@ function savePack(): void {
   if (!currentPack) return;
 
   if (!currentPack.title.trim()) {
-    alert('Введите название набора');
+    showModal('Введите название набора');
     return;
   }
 
@@ -333,10 +333,3 @@ function exportPack(pack: QuestionPack): void {
   URL.revokeObjectURL(url);
 }
 
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
