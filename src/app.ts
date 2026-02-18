@@ -2,17 +2,13 @@ import { Screen } from './types';
 import { loadSaves, deleteSave, loadBuiltinPacks } from './storage';
 import { initEditor } from './editor';
 import { initSetup, resumeGame, initBoard } from './game';
-import { escapeHtml } from './utils';
+import { escapeHtml, showModal } from './utils';
 
 // --- Роутинг ---
-
-let currentScreen: Screen = 'home';
 
 const screens: Screen[] = ['home', 'setup', 'board', 'question', 'results', 'editor'];
 
 export function navigateTo(screen: Screen): void {
-  currentScreen = screen;
-
   screens.forEach((id) => {
     const el = document.getElementById(`screen-${id}`);
     if (el) el.classList.toggle('hidden', id !== screen);
@@ -92,6 +88,7 @@ function showSavePicker(): void {
         showSavePicker();
       } else {
         updateContinueButton();
+        showModal('Все сохранения удалены');
       }
     });
   });

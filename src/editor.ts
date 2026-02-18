@@ -1,6 +1,6 @@
 import { QuestionPack } from './types';
 import { loadPacks, savePacks } from './storage';
-import { escapeHtml, showModal } from './utils';
+import { escapeHtml, showModal, sanitizeImageUrl } from './utils';
 
 let currentPack: QuestionPack | null = null;
 let currentPackIndex: number = -1; // -1 = новый набор
@@ -263,7 +263,9 @@ function renderCategories(): void {
   container.querySelectorAll<HTMLInputElement>('[data-q-image-url]').forEach((input) => {
     input.addEventListener('input', () => {
       const [ci, qi] = input.dataset.qImageUrl!.split('-').map(Number);
-      currentPack!.categories[ci].questions[qi].image = input.value.trim() || undefined;
+      const url = sanitizeImageUrl(input.value);
+      currentPack!.categories[ci].questions[qi].image = url || undefined;
+      input.style.borderColor = input.value.trim() && !url ? '#ef4444' : '';
     });
   });
 

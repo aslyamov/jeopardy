@@ -1,7 +1,7 @@
 import { GameState, Player } from './types';
 import { loadPacks, loadSaves, upsertSave, deleteSave } from './storage';
 import { navigateTo } from './app';
-import { escapeHtml, showModal } from './utils';
+import { escapeHtml, showModal, sanitizeImageUrl } from './utils';
 
 let game: GameState | null = null;
 let timerInterval: number | null = null;
@@ -9,6 +9,9 @@ let selectedPlayers: Set<number> = new Set();
 let setupInitialized = false;
 let currentSlotId: string = '';
 let currentSaveName: string = '';
+
+const PLAYER_BTN_DEFAULT = 'px-5 py-3 rounded-xl font-bold transition-all text-sm md:text-base border-2 border-gray-600 bg-gray-700 hover:bg-gray-600 text-white';
+const PLAYER_BTN_SELECTED = 'px-5 py-3 rounded-xl font-bold transition-all text-sm md:text-base border-2 border-emerald-400 bg-emerald-600 hover:bg-emerald-500 text-white ring-2 ring-emerald-400/50';
 
 // ===================== ЭТАП 3: НАСТРОЙКА ИГРЫ =====================
 
@@ -182,7 +185,7 @@ function openQuestion(catIdx: number, qIdx: number): void {
   game.currentQuestion = { catIdx, qIdx };
   selectedPlayers = new Set();
   const question = game.pack.categories[catIdx].questions[qIdx];
-  const imageSrc = question.image ? escapeHtml(question.image) : '';
+  const imageSrc = question.image ? escapeHtml(sanitizeImageUrl(question.image)) : '';
 
   const screen = document.getElementById('screen-question')!;
   screen.innerHTML = `
@@ -215,8 +218,7 @@ function openQuestion(catIdx: number, qIdx: number): void {
       <!-- Кнопки игроков: выбор кому начислить -->
       <div id="player-buttons" class="flex flex-wrap gap-3 justify-center">
         ${game.players.map((p, i) => `
-          <button data-toggle-player="${i}"
-            class="px-5 py-3 rounded-xl font-bold transition-all text-sm md:text-base border-2 border-gray-600 bg-gray-700 hover:bg-gray-600 text-white">
+          <button data-toggle-player="${i}" class="${PLAYER_BTN_DEFAULT}">
             ${escapeHtml(p.name)}
           </button>
         `).join('')}
@@ -278,10 +280,10 @@ function openQuestion(catIdx: number, qIdx: number): void {
 function togglePlayerSelection(playerIdx: number, btn: HTMLButtonElement): void {
   if (selectedPlayers.has(playerIdx)) {
     selectedPlayers.delete(playerIdx);
-    btn.className = 'px-5 py-3 rounded-xl font-bold transition-all text-sm md:text-base border-2 border-gray-600 bg-gray-700 hover:bg-gray-600 text-white';
+    btn.className = PLAYER_BTN_DEFAULT;
   } else {
     selectedPlayers.add(playerIdx);
-    btn.className = 'px-5 py-3 rounded-xl font-bold transition-all text-sm md:text-base border-2 border-emerald-400 bg-emerald-600 hover:bg-emerald-500 text-white ring-2 ring-emerald-400/50';
+    btn.className = PLAYER_BTN_SELECTED;
   }
 
   const nextBtn = document.getElementById('btn-confirm-next');
