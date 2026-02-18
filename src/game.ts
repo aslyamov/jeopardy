@@ -1,5 +1,5 @@
 import { GameState, Player } from './types';
-import { loadPacks, saveGame, loadGame, clearGame } from './storage';
+import { loadPacks, loadSaves, upsertSave, deleteSave } from './storage';
 import { navigateTo } from './app';
 import { escapeHtml, showModal } from './utils';
 
@@ -7,6 +7,8 @@ let game: GameState | null = null;
 let timerInterval: number | null = null;
 let selectedPlayers: Set<number> = new Set();
 let setupInitialized = false;
+let currentSlotId: string = '';
+let currentSaveName: string = '';
 
 // ===================== ЭТАП 3: НАСТРОЙКА ИГРЫ =====================
 
@@ -79,19 +81,34 @@ function startGame(): void {
 
   const answered = pack.categories.map((cat) => cat.questions.map(() => false));
 
+  // Новый слот для этой игры
+  currentSlotId = Date.now().toString();
+  currentSaveName = `${pack.title} · ${players.map((p) => p.name).join(', ')}`;
+
   game = { pack, players, timer, answered, currentQuestion: null };
-  saveGame(game);
+  autoSave();
   renderBoard();
   navigateTo('board');
 }
 
-export function resumeGame(): void {
-  const saved = loadGame();
-  if (saved) {
-    game = saved;
-    renderBoard();
-    navigateTo('board');
-  }
+export function resumeGame(slotId: string): void {
+  const slot = loadSaves().find((s) => s.id === slotId);
+  if (!slot) return;
+  game = slot.state;
+  currentSlotId = slot.id;
+  currentSaveName = slot.name;
+  renderBoard();
+  navigateTo('board');
+}
+
+function autoSave(): void {
+  if (!game || !currentSlotId) return;
+  upsertSave({
+    id: currentSlotId,
+    name: currentSaveName,
+    savedAt: Date.now(),
+    state: game,
+  });
 }
 
 // ===================== ЭТАП 4: ИГРОВОЕ ПОЛЕ =====================
@@ -227,7 +244,6 @@ function openQuestion(catIdx: number, qIdx: number): void {
   navigateTo('question');
   startTimer();
 
-  // Тогл выбора игрока
   screen.querySelectorAll<HTMLButtonElement>('[data-toggle-player]').forEach((btn) => {
     btn.addEventListener('click', () => {
       const pi = parseInt(btn.dataset.togglePlayer!);
@@ -237,16 +253,13 @@ function openQuestion(catIdx: number, qIdx: number): void {
 
   document.getElementById('btn-show-answer')!.addEventListener('click', () => {
     showAnswer();
-    // Показать кнопку "Никто не ответил" после раскрытия ответа
     document.getElementById('btn-skip-question')?.classList.remove('hidden');
   });
 
-  // Далее → начислить очки выделенным и закрыть
   document.getElementById('btn-confirm-next')!.addEventListener('click', () => {
     confirmAndClose(question.value);
   });
 
-  // Никто не ответил → пометить отвеченным без начисления
   document.getElementById('btn-skip-question')!.addEventListener('click', () => {
     stopTimer();
     markAnswered();
@@ -254,7 +267,6 @@ function openQuestion(catIdx: number, qIdx: number): void {
     goBackToBoard();
   });
 
-  // Назад к полю — без начисления, вопрос НЕ помечается
   document.getElementById('btn-back-board')!.addEventListener('click', () => {
     stopTimer();
     game!.currentQuestion = null;
@@ -272,7 +284,6 @@ function togglePlayerSelection(playerIdx: number, btn: HTMLButtonElement): void 
     btn.className = 'px-5 py-3 rounded-xl font-bold transition-all text-sm md:text-base border-2 border-emerald-400 bg-emerald-600 hover:bg-emerald-500 text-white ring-2 ring-emerald-400/50';
   }
 
-  // Показать/скрыть кнопку "Далее"
   const nextBtn = document.getElementById('btn-confirm-next');
   const skipBtn = document.getElementById('btn-skip-question');
   const hint = document.getElementById('selection-hint');
@@ -282,7 +293,6 @@ function togglePlayerSelection(playerIdx: number, btn: HTMLButtonElement): void 
     if (hint) hint.textContent = `Очки получат: ${Array.from(selectedPlayers).map(i => game!.players[i].name).join(', ')}`;
   } else {
     nextBtn?.classList.add('hidden');
-    // Показать "Никто не ответил" только если ответ уже раскрыт
     const answerVisible = !document.getElementById('answer-block')?.classList.contains('hidden');
     if (answerVisible) skipBtn?.classList.remove('hidden');
     if (hint) hint.textContent = 'Нажми на игрока — ему начислятся очки';
@@ -292,16 +302,9 @@ function togglePlayerSelection(playerIdx: number, btn: HTMLButtonElement): void 
 function confirmAndClose(value: number): void {
   if (!game) return;
   stopTimer();
-
-  // Начислить очки выбранным
-  selectedPlayers.forEach((pi) => {
-    game!.players[pi].score += value;
-  });
-
-  // Пометить вопрос отвеченным
+  selectedPlayers.forEach((pi) => { game!.players[pi].score += value; });
   markAnswered();
-  saveGame(game);
-
+  autoSave();
   game.currentQuestion = null;
   goBackToBoard();
 }
@@ -309,7 +312,6 @@ function confirmAndClose(value: number): void {
 function goBackToBoard(): void {
   if (!game) return;
   const allAnswered = game.answered.every((cat) => cat.every((a) => a));
-
   if (allAnswered) {
     showResults();
   } else {
@@ -322,7 +324,7 @@ function markAnswered(): void {
   if (!game || !game.currentQuestion) return;
   const { catIdx, qIdx } = game.currentQuestion;
   game.answered[catIdx][qIdx] = true;
-  saveGame(game);
+  autoSave();
 }
 
 function showAnswer(): void {
@@ -369,13 +371,9 @@ function stopTimer(): void {
 function checkGameEnd(): void {
   if (!game) return;
   const allAnswered = game.answered.every((cat) => cat.every((a) => a));
-
   const endBtn = document.getElementById('btn-end-game');
   if (endBtn) endBtn.classList.toggle('hidden', allAnswered);
-
-  if (allAnswered) {
-    showResults();
-  }
+  if (allAnswered) showResults();
 }
 
 export function initBoard(): void {
@@ -393,8 +391,7 @@ function showResults(): void {
   const sorted = [...game.players].sort((a, b) => b.score - a.score);
   const maxScore = sorted[0]?.score ?? 0;
 
-  const resultsContent = document.getElementById('results-content')!;
-  resultsContent.innerHTML = `
+  document.getElementById('results-content')!.innerHTML = `
     <div class="w-full space-y-3">
       ${sorted.map((p, i) => {
         const isWinner = p.score === maxScore && i === 0;
@@ -410,6 +407,9 @@ function showResults(): void {
     </div>
   `;
 
-  clearGame();
+  // Удаляем завершённую игру из сохранений
+  if (currentSlotId) deleteSave(currentSlotId);
+  currentSlotId = '';
+
   navigateTo('results');
 }

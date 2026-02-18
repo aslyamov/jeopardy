@@ -32,6 +32,15 @@ export interface GameState {
   currentQuestion: { catIdx: number; qIdx: number } | null;
 }
 
+// --- Слот сохранения ---
+
+export interface SaveSlot {
+  id: string;
+  name: string;     // "{packTitle} · {players}"
+  savedAt: number;  // timestamp
+  state: GameState;
+}
+
 // --- Роутинг ---
 
 export type Screen =

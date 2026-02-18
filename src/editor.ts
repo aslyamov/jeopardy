@@ -177,14 +177,21 @@ function renderCategories(): void {
           .map(
             (q, qi) => `
           <div class="bg-gray-900/50 rounded-lg p-3 space-y-2">
-            <div class="flex gap-2">
+            <div class="flex gap-2 items-center">
+              <div class="flex flex-col gap-0.5 shrink-0">
+                <button data-move-up="${ci}-${qi}" ${qi === 0 ? 'disabled' : ''}
+                  class="text-gray-400 hover:text-white text-xs leading-none px-1 disabled:opacity-20 transition-colors">▲</button>
+                <button data-move-down="${ci}-${qi}" ${qi === cat.questions.length - 1 ? 'disabled' : ''}
+                  class="text-gray-400 hover:text-white text-xs leading-none px-1 disabled:opacity-20 transition-colors">▼</button>
+              </div>
               <input data-q-value="${ci}-${qi}" type="number" value="${q.value}" step="100" min="0"
                 class="w-24 bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-gold text-center font-bold focus:border-blue-500 focus:outline-none"
                 placeholder="Сумма" />
               <input data-q-question="${ci}-${qi}" type="text" value="${escapeHtml(q.question)}"
                 class="flex-1 bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white focus:border-blue-500 focus:outline-none"
                 placeholder="Вопрос" />
-              <button data-remove-q="${ci}-${qi}" class="text-red-400 hover:text-red-300 text-xs transition-colors">✕</button>
+              <button data-duplicate-q="${ci}-${qi}" class="text-blue-400 hover:text-blue-300 text-xs transition-colors shrink-0" title="Дублировать">⧉</button>
+              <button data-remove-q="${ci}-${qi}" class="text-red-400 hover:text-red-300 text-xs transition-colors shrink-0">✕</button>
             </div>
             <div class="flex gap-2">
               <input data-q-answer="${ci}-${qi}" type="text" value="${escapeHtml(q.answer)}"
@@ -265,6 +272,41 @@ function renderCategories(): void {
     btn.addEventListener('click', () => {
       const [ci, qi] = btn.dataset.clearImage!.split('-').map(Number);
       currentPack!.categories[ci].questions[qi].image = undefined;
+      renderCategories();
+    });
+  });
+
+  // Переместить вопрос вверх
+  container.querySelectorAll<HTMLButtonElement>('[data-move-up]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const [ci, qi] = btn.dataset.moveUp!.split('-').map(Number);
+      const questions = currentPack!.categories[ci].questions;
+      if (qi > 0) {
+        [questions[qi], questions[qi - 1]] = [questions[qi - 1], questions[qi]];
+        renderCategories();
+      }
+    });
+  });
+
+  // Переместить вопрос вниз
+  container.querySelectorAll<HTMLButtonElement>('[data-move-down]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const [ci, qi] = btn.dataset.moveDown!.split('-').map(Number);
+      const questions = currentPack!.categories[ci].questions;
+      if (qi < questions.length - 1) {
+        [questions[qi], questions[qi + 1]] = [questions[qi + 1], questions[qi]];
+        renderCategories();
+      }
+    });
+  });
+
+  // Дублировать вопрос
+  container.querySelectorAll<HTMLButtonElement>('[data-duplicate-q]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const [ci, qi] = btn.dataset.duplicateQ!.split('-').map(Number);
+      const questions = currentPack!.categories[ci].questions;
+      const copy = JSON.parse(JSON.stringify(questions[qi]));
+      questions.splice(qi + 1, 0, copy);
       renderCategories();
     });
   });
