@@ -3,8 +3,11 @@ import { Chess } from 'chess.js';
 
 /** Render a chess position into `container` using Chessground. */
 export function mountBoard(container: HTMLElement, fen: string): void {
+  const turn = fen.split(' ')[1];
+  const orientation = turn === 'b' ? 'black' : 'white';
   Chessground(container, {
     fen,
+    orientation,
     coordinates: true,
     animation: { enabled: false },
     movable:    { free: false, color: undefined },   // фигуры не двигаются
