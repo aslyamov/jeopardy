@@ -65,6 +65,10 @@ function fromRaw(r: RawState): GameState {
   };
 }
 
+function serializeSlot(slot: SaveSlot): RawSlot {
+  return { id: slot.id, name: slot.name, savedAt: slot.savedAt, state: toRaw(slot.state) };
+}
+
 // ── Public API ────────────────────────────────────────────────
 
 export function loadSaves(): SaveSlot[] {
@@ -80,21 +84,14 @@ export function loadSaves(): SaveSlot[] {
 export function upsertSave(slot: SaveSlot): void {
   const saves = loadSaves();
   const idx = saves.findIndex(s => s.id === slot.id);
-  const raw: RawSlot = {
-    id: slot.id, name: slot.name, savedAt: slot.savedAt, state: toRaw(slot.state),
-  };
-  const raws = saves.map(s => ({
-    id: s.id, name: s.name, savedAt: s.savedAt, state: toRaw(s.state),
-  }));
-  if (idx >= 0) raws[idx] = raw; else raws.push(raw);
+  const raws = saves.map(serializeSlot);
+  if (idx >= 0) raws[idx] = serializeSlot(slot); else raws.push(serializeSlot(slot));
   localStorage.setItem(SAVES_KEY, JSON.stringify(raws));
 }
 
 export function deleteSave(id: string): void {
-  const saves = loadSaves().filter(s => s.id !== id);
-  localStorage.setItem(SAVES_KEY, JSON.stringify(
-    saves.map(s => ({ id: s.id, name: s.name, savedAt: s.savedAt, state: toRaw(s.state) }))
-  ));
+  const raws = loadSaves().filter(s => s.id !== id).map(serializeSlot);
+  localStorage.setItem(SAVES_KEY, JSON.stringify(raws));
 }
 
 /** Convenience wrapper — save/update the current game. */

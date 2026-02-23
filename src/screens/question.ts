@@ -10,6 +10,7 @@ let timeLeft = 0;
 let selectedPlayers = new Set<number>(); // indices into game.players
 let answerShown = false;
 let locked = false;
+let currentAC: AbortController | null = null;
 
 // ── Entry point ──────────────────────────────────────────────
 export function render(container: HTMLElement): void {
@@ -112,13 +113,12 @@ export function render(container: HTMLElement): void {
   attachActions(container, q.value);
   startTimer(game.timerSecs, container);
 
-  // L / Д key lock
-  const onKey = (e: KeyboardEvent) => {
+  // L / Д key lock — AbortController ensures cleanup even on fast navigation
+  currentAC?.abort();
+  currentAC = new AbortController();
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
     if (e.key === 'l' || e.key === 'L' || e.key === 'д' || e.key === 'Д') toggleLock(container);
-  };
-  document.addEventListener('keydown', onKey);
-  // Clean up listener when navigating away
-  (container as any).__cleanupKey = () => document.removeEventListener('keydown', onKey);
+  }, { signal: currentAC.signal });
 }
 
 // ── Player toggle buttons ────────────────────────────────────
@@ -189,7 +189,7 @@ function attachActions(container: HTMLElement, value: number): void {
     stopTimer();
     selectedPlayers.forEach(i => { game!.players[i].score += value; });
     markAnswered();
-    cleanup(container);
+    cleanup();
     navigate('game-board');
   });
 
@@ -197,7 +197,7 @@ function attachActions(container: HTMLElement, value: number): void {
     if (locked) return;
     stopTimer();
     markAnswered();
-    cleanup(container);
+    cleanup();
     navigate('game-board');
   });
 
@@ -205,7 +205,7 @@ function attachActions(container: HTMLElement, value: number): void {
   container.querySelector('#btn-back')!.addEventListener('click', () => {
     if (locked) return;
     stopTimer();
-    cleanup(container);
+    cleanup();
     navigate('game-board');
   });
 }
@@ -234,8 +234,8 @@ function startTimer(secs: number, container: HTMLElement): void {
     if (timeLeft <= 5 && timeLeft > 0) el.style.color = '#f87171';
     if (timeLeft <= 0) {
       stopTimer();
-      // Auto-reveal answer and show skip
-      if (!answerShown) revealAnswer(container);
+      // Auto-reveal answer — only if still on this screen
+      if (!answerShown && document.contains(container)) revealAnswer(container);
     }
   }, 1000);
 }
@@ -275,9 +275,8 @@ function markAnswered(): void {
   if (game.answered.size >= total) navigate('results');
 }
 
-function cleanup(container: HTMLElement): void {
+function cleanup(): void {
   stopTimer();
-  // Remove keydown listener
-  const fn = (container as any).__cleanupKey;
-  if (fn) { fn(); delete (container as any).__cleanupKey; }
+  currentAC?.abort();
+  currentAC = null;
 }

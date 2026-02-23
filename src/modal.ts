@@ -2,6 +2,8 @@
  * Beautiful custom modals — replaces system alert() / confirm()
  */
 
+import { escHtml } from './utils';
+
 const BASE_OVERLAY =
   'fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 px-4';
 const BASE_PANEL =
@@ -18,7 +20,7 @@ export function showAlert(msg: string, onClose?: () => void): void {
   const overlay = createOverlay();
   overlay.innerHTML = `
     <div class="${BASE_PANEL}" style="max-width:380px">
-      <p class="text-center text-white text-base leading-relaxed">${msg}</p>
+      <p class="text-center text-white text-base leading-relaxed">${escHtml(msg)}</p>
       <button id="modal-ok"
         class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl border-0 text-white
                font-bold cursor-pointer transition-colors">
@@ -56,7 +58,7 @@ export function showConfirm(
         <button id="modal-confirm"
           class="flex-1 py-2.5 ${confirmCls} rounded-xl border-0 text-white font-bold
                  cursor-pointer transition-colors">
-          ${confirmLabel}
+          ${escHtml(confirmLabel)}
         </button>
       </div>
     </div>
