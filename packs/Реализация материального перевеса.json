@@ -1,0 +1,145 @@
+{
+  "title": "Реализация материального перевеса",
+  "categories": [
+    {
+      "name": "Материальный перевес",
+      "questions": [
+        {
+          "value": 100,
+          "question": "Ход белых",
+          "answer": "Материальный перевес у белых.",
+          "fen": "5nk1/p4pp1/1p2p2p/8/7P/1R4P1/PP2PP2/6K1 w - - 0 1"
+        },
+        {
+          "value": 200,
+          "question": "Ход белых",
+          "answer": "Материальный перевес у белых.",
+          "fen": "7k/ppp3q1/3p3p/4p2Q/2P1P3/1P4bP/P5P1/5R1K w - - 0 28"
+        },
+        {
+          "value": 300,
+          "question": "Ход чёрных",
+          "answer": "Материальный перевес у черных.",
+          "fen": "r2qkr2/pppp3p/6p1/4p3/2B1P3/2NP1N2/PPP2K2/R6R b q - 1 13"
+        },
+        {
+          "value": 400,
+          "question": "Ход чёрных",
+          "answer": "Материальный перевес у белых.",
+          "fen": "r4k2/ppp5/3p4/2b1pPp1/4P2r/2NP3P/PPP5/R3K2R b KQ - 0 17"
+        },
+        {
+          "value": 500,
+          "question": "Ход чёрных",
+          "answer": "Материальный перевес у черных.",
+          "fen": "r1bqk2r/p1pp1pbp/1pn1pnp1/8/3P4/1BP2NQP/PP4P1/R1B1K2R b KQkq - 0 8"
+        }
+      ]
+    },
+    {
+      "name": "Профилактика",
+      "questions": [
+        {
+          "value": 100,
+          "question": "Ход белых",
+          "answer": "24. h3!",
+          "fen": "4r1k1/pp4pp/2pp4/3p2B1/P7/1Q6/1PP2PPP/6K1 w - - 1 24"
+        },
+        {
+          "value": 200,
+          "question": "Ход чёрных",
+          "answer": "12... Фf6!",
+          "fen": "r1bqk1nr/pppp1ppp/6n1/1Bb3N1/4P2P/2N2Q2/PPPP4/R1B2K2 b kq - 3 12"
+        },
+        {
+          "value": 300,
+          "question": "Ход чёрных",
+          "answer": "52... h6!",
+          "fen": "r5k1/5ppp/3rpn2/8/8/2PP3P/PR2KPP1/1R6 b - - 19 52"
+        },
+        {
+          "value": 400,
+          "question": "Ход чёрных",
+          "answer": "1... g6!",
+          "fen": "r2q1rk1/2p2ppp/1pbbpn2/p2p2B1/3P4/2PQPN1P/PPB2PP1/5RK1 b - - 0 1"
+        },
+        {
+          "value": 500,
+          "question": "Ход чёрных",
+          "answer": "1... h6!",
+          "fen": "r1bq1rk1/ppp2ppp/2n1pn2/2bp2N1/7Q/1P1BP3/PBPP1PPP/R3K2R b KQ - 0 1"
+        }
+      ]
+    },
+    {
+      "name": "Гармония",
+      "questions": [
+        {
+          "value": 100,
+          "question": "Ход белых",
+          "answer": "Конь на c3, слон на f4, ладья на e1.",
+          "fen": "8/p5pp/2p2k2/8/3P4/7P/PPP2PP1/RNB3K1 w - - 1 21"
+        },
+        {
+          "value": 200,
+          "question": "Ход белых",
+          "answer": "Слон на d2, ладья на c1.",
+          "fen": "8/5p2/3p1p2/2p1pk2/p7/P2P2P1/1P2PP1P/R1B3K1 w - - 1 22"
+        },
+        {
+          "value": 300,
+          "question": "Ход чёрных",
+          "answer": "Ладья на f8-f3, ферзь на h5",
+          "fen": "1kr1q2r/p5pp/1p6/2p1p3/3pP3/8/P1K5/8 b - - 0 1"
+        },
+        {
+          "value": 400,
+          "question": "Ход белых",
+          "answer": "Ферзь e2, слон на e3, ладья на d1",
+          "fen": "4qrk1/2p2ppp/2p5/pp2p3/4P3/8/PPPQ2PP/R1B3K1 w - - 1 16"
+        },
+        {
+          "value": 500,
+          "question": "Ход чёрных",
+          "answer": "Конь d7-f8-g6-h4, слон d7-b5",
+          "fen": "rnbr2k1/ppp1bppp/4p3/3pP3/3P4/1NP1B2q/PP3P2/R2Q1RK1 b - - 0 1"
+        }
+      ]
+    },
+    {
+      "name": "Размен фигур",
+      "questions": [
+        {
+          "value": 100,
+          "question": "Ход белых",
+          "answer": "Размен слонов - Cg5",
+          "fen": "3k4/pp2b1pp/4p3/3pPp2/2pP3P/2P3P1/PP3P2/R1B1K3 w Q - 0 1"
+        },
+        {
+          "value": 200,
+          "question": "Ход чёрных",
+          "answer": "Размен ферзей - Фb1",
+          "fen": "1r4k1/p1pp1p1p/b1p5/8/8/7P/PqP2PP1/4Q1K1 b - - 1 20"
+        },
+        {
+          "value": 300,
+          "question": "Ход белых",
+          "answer": "28. Сf4+ К:f4 29. Ф:f4+ Ф:f4 30. e:f4",
+          "fen": "8/p1k5/4np1B/8/Q7/P3PPqP/2P3P1/3K1B1R w - - 1 28"
+        },
+        {
+          "value": 400,
+          "question": "Ход чёрных",
+          "answer": "20... Л:a3 21. Л:a3 Л:a3 22. b:a3 С:c3 23. d:c3 С:g4 24. h:g4",
+          "fen": "r2qk3/r6p/2p1bp2/4p1p1/2Pb2N1/R1B4P/1P1P1PP1/R5K1 b - - 0 20"
+        },
+        {
+          "value": 500,
+          "question": "Ход белых",
+          "answer": "1. К:f5 К:f5 2. С:f5 Ф:f5 3. Ф:f5 g:f5 4. Л:e7 Л:e7 5. Лe1",
+          "fen": "4r1k1/pp1qrpnp/2p3p1/3p1bQ1/3P3N/2PB2BP/PP3PP1/3RRK2 w - - 0 1"
+        }
+      ]
+    }
+  ]
+}
