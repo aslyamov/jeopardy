@@ -1,0 +1,145 @@
+{
+  "title": "Своя игра",
+  "categories": [
+    {
+      "name": "Мат в 1 ход",
+      "questions": [
+        {
+          "value": 100,
+          "question": "Мат в 1 ход. Ход белых",
+          "answer": "1. Лh8#",
+          "fen": "r2r1k2/2p3p1/3P2P1/p1p1bq2/4p3/P7/1P3PP1/R3K2R w KQ - 0 1"
+        },
+        {
+          "value": 200,
+          "question": "Мат в 1 ход. Ход белых",
+          "answer": "1. Лd8#",
+          "fen": "4kb1r/ppp4p/5Q2/5p1q/N1P5/1P2K3/P4P2/3R4 w k - 0 1"
+        },
+        {
+          "value": 300,
+          "question": "Мат в 1 ход. Ход белых",
+          "answer": "1. c8=Ф#",
+          "fen": "5k2/2PQ4/1P2p3/P2pqp1p/8/5p1n/5PrP/R1R4K w - - 0 1"
+        },
+        {
+          "value": 400,
+          "question": "Мат в 1 ход. Ход чёрных",
+          "answer": "1... Фc5#",
+          "fen": "6k1/q7/n2PP3/3K4/8/3b4/8/8 b - - 0 1"
+        },
+        {
+          "value": 500,
+          "question": "Мат в 1 ход. Ход чёрных",
+          "answer": "1... b5#",
+          "fen": "1kr4r/1ppqbppp/5n2/8/p1KQPB2/3P3P/nPPNN1P1/2R2B1R b - - 0 1"
+        }
+      ]
+    },
+    {
+      "name": "Простые взятия",
+      "questions": [
+        {
+          "value": 100,
+          "question": "Сруби фигуру. Ход белых",
+          "answer": "1. Л:e1",
+          "fen": "r7/pb3pk1/3N2pp/1P1n3q/2B5/P2Q1PP1/1P5P/4rRK1 w - - 0 1"
+        },
+        {
+          "value": 200,
+          "question": "Сруби фигуру. Ход белых",
+          "answer": "1. b:c6",
+          "fen": "r4k1r/2p2p2/p1qpb2p/1P1n4/3B2P1/6PP/P2N4/4RRK1 w - - 0 1"
+        },
+        {
+          "value": 300,
+          "question": "Сруби фигуру. Ход белых",
+          "answer": "1. С:f5",
+          "fen": "r2q1rk1/pp3ppp/n7/5b2/3PB3/1Q3N2/PP3PPP/R1B1b1K1 w - - 0 1"
+        },
+        {
+          "value": 400,
+          "question": "Сруби фигуру. Ход чёрных",
+          "answer": "1... Л:d1",
+          "fen": "3rq3/1p4k1/p4ppp/4p3/R7/2P1Q3/PP3KPP/3R4 b - - 0 1"
+        },
+        {
+          "value": 500,
+          "question": "Сруби фигуру. Ход белых",
+          "answer": "1. Л:a1",
+          "fen": "2bq1rk1/1p2p2p/3p2p1/3N1p2/1RP1PP2/3PB1P1/4nKBP/b4R2 w - - 0 1"
+        }
+      ]
+    },
+    {
+      "name": "Простая защита",
+      "questions": [
+        {
+          "value": 100,
+          "question": "Спаси свою фигуру. Ход белых",
+          "answer": "1. Кd4",
+          "fen": "2r3r1/1p1kb2p/p2pNp2/1q2n3/5B2/Q5P1/PP3P1P/3RR1K1 w - - 0 1"
+        },
+        {
+          "value": 200,
+          "question": "Спаси свою фигуру. Ход чёрных",
+          "answer": "1... Фb6",
+          "fen": "r5k1/p2n1ppp/4p3/3pP3/1Pr5/P4N2/4RqPP/R2Q3K b - - 0 1"
+        },
+        {
+          "value": 300,
+          "question": "Спаси свою фигуру. Ход белых",
+          "answer": "1. Фh4",
+          "fen": "rnbqr2k/p1p3pp/1p3n2/3p4/2PP4/b1N3NQ/1P2BPPP/R1B2RK1 w - - 0 1"
+        },
+        {
+          "value": 400,
+          "question": "Спаси свою фигуру. Ход белых",
+          "answer": "1. С:c4",
+          "fen": "r1bqk2r/pp1p1pp1/3Q1n1p/4p3/2n1P3/BNP2P2/P1P3PP/R3KB1R w KQkq - 0 1"
+        },
+        {
+          "value": 500,
+          "question": "Спаси свою фигуру. Ход чёрных",
+          "answer": "1... Кc6",
+          "fen": "rnbq1rk1/p2p1pp1/1p5p/b1p1P3/2P1B3/B1P1PN2/P1Q2PPP/R3K2R b KQ - 0 1"
+        }
+      ]
+    },
+    {
+      "name": "Ничья",
+      "questions": [
+        {
+          "value": 100,
+          "question": "Ничья. Ход белых",
+          "answer": "1. Кc7+ Крb8 2. Кa6+ Крa8 3. Кc7+ Крb8 4. Кa6+",
+          "fen": "k1q5/8/1K2N3/8/8/8/8/8 w - - 0 1"
+        },
+        {
+          "value": 200,
+          "question": "Ничья. Ход белых",
+          "answer": "1. Фf7+ Крh8 2. Фf8+ Крh7 3. Фf7+",
+          "fen": "8/7k/1p4pp/r7/3p2P1/1Pb5/2P5/1K3Q2 w - - 0 1"
+        },
+        {
+          "value": 300,
+          "question": "Ничья. Ход белых",
+          "answer": "1. Фh7+ Кр:h7",
+          "fen": "7k/3p2p1/3P1p2/7p/6r1/3Q3K/7P/4q3 w - - 0 1"
+        },
+        {
+          "value": 400,
+          "question": "Ничья. Ход белых",
+          "answer": "1. Лc4+ Ф:c4",
+          "fen": "8/8/2k5/K7/7R/8/8/2q5 w - - 0 1"
+        },
+        {
+          "value": 500,
+          "question": "Ничья. Ход белых",
+          "answer": "1. c4 b:c4+ 2. Кр:c4",
+          "fen": "8/6b1/1k6/1p6/8/1KP5/8/8 w - - 0 1"
+        }
+      ]
+    }
+  ]
+}
