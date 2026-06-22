@@ -1,0 +1,92 @@
+{
+  "title": "Уничтожение защитника",
+  "categories": [
+    {
+      "name": "Уничтожение защитника для мата",
+      "questions": [
+        {
+          "value": 100,
+          "question": "Уничтожение защитника для мата",
+          "answer": "1. Л:f6 gf 2. Фh7#",
+          "fen": "3q1rk1/5ppp/5n2/8/7Q/4P3/2B3PP/5RK1 w - - 0 1"
+        },
+        {
+          "value": 200,
+          "question": "Уничтожение защитника для мата",
+          "answer": "1. Л:e5 Л:e5 2. Фg7#",
+          "fen": "4q1k1/4rp1p/5QpB/4b2P/4R3/8/5PP1/6K1 w - - 0 1"
+        },
+        {
+          "value": 300,
+          "question": "Уничтожение защитника для мата",
+          "answer": "1. Ф:d4+ Л:d4 2. b6#",
+          "fen": "6R1/kp2qp2/p4p2/PP6/3br1P1/2PQ4/1K6/8 w - - 0 1"
+        },
+        {
+          "value": 400,
+          "question": "Уничтожение защитника для мата",
+          "answer": "1. Ф:c6+ bc 2. Лd8#",
+          "fen": "r1b1k2r/ppp3p1/2n1q2p/4N1B1/4Q3/2P5/PPP3PP/2KR3R w kq - 0 1"
+        }
+      ]
+    },
+    {
+      "name": "Уничтожение защитника для выигрыша фигуры",
+      "questions": [
+        {
+          "value": 100,
+          "question": "Уничтожение защитника для выигрыша фигуры",
+          "answer": "1. C:c5+ bc 2. Кр:d3",
+          "fen": "8/8/1p1k2p1/2n5/8/3r2P1/1PK2B1P/8 w - - 0 1"
+        },
+        {
+          "value": 200,
+          "question": "Уничтожение защитника для выигрыша фигуры",
+          "answer": "1. С:g7 Кр:g7 2. Ф:d4+",
+          "fen": "r1bq1rk1/pp3pbp/3pp1pB/8/2BnP3/2N5/PPPQ1PPP/R3K2R w KQ - 0 1"
+        },
+        {
+          "value": 300,
+          "question": "Уничтожение защитника для выигрыша фигуры",
+          "answer": "1. С:g5 C:g5 2. Лh7+ Крf6 3. Л:a7",
+          "fen": "8/r3k3/p3pb2/1p3pn1/2p5/P1N5/1PPB2P1/1K5R w - - 0 1"
+        },
+        {
+          "value": 400,
+          "question": "Уничтожение защитника для выигрыша фигуры",
+          "answer": "1. Л:e6 fe 2. Кd7+ Крe7 3. К:b8",
+          "fen": "1r3k2/p4p1p/2p1bN1b/3p4/3P4/PP3PN1/5KPP/4R3 w - - 0 1"
+        }
+      ]
+    },
+    {
+      "name": "Случайная тактика",
+      "questions": [
+        {
+          "value": 100,
+          "question": "Случайная тактика",
+          "answer": "1. b4 Лa2 2. bc",
+          "fen": "1k3r2/1p5p/2p2Np1/r1n5/8/2P4P/1P4P1/3R1RK1 w - - 0 1"
+        },
+        {
+          "value": 200,
+          "question": "Случайная тактика",
+          "answer": "1. e5 Фc7 2. ef",
+          "fen": "r2q2k1/1p3pp1/p3pnp1/2p3B1/2P1P3/1P5P/P1Q2PP1/4R1K1 w - - 0 1"
+        },
+        {
+          "value": 300,
+          "question": "Случайная тактика",
+          "answer": "1. Фg5+ Крe6 2. Q:d8",
+          "fen": "r1bq2nr/pp1p2pp/2p2k2/3Q4/4PP2/2N5/P5PP/R1B1KB1R w KQ - 0 1"
+        },
+        {
+          "value": 400,
+          "question": "Случайная тактика",
+          "answer": "1. Лe8+ Крa8 2. Л:c8#",
+          "fen": "1kr3nr/pp3ppp/2p3b1/4R3/5B2/3P3P/PPP2PP1/R5K1 w - - 0 1"
+        }
+      ]
+    }
+  ]
+}
